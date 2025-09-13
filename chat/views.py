@@ -46,7 +46,7 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
                 'participants',
                 'created_by',
             )
-        
+
         return ChatRoom.objects.filter(
             participants=self.request.user,
             is_active=True

@@ -67,10 +67,10 @@ class Post(models.Model):
             hashtag, created = Hashtag.objects.get_or_create(name=hashtag_name)
             # Usar get_or_create para evitar duplicados
             post_hashtag, created = PostHashtag.objects.get_or_create(
-                post=self, 
+                post=self,
                 hashtag=hashtag
             )
-            
+
             # Actualizar contador solo si es necesario
             current_count = hashtag.posts.count()
             if hashtag.posts_count != current_count:

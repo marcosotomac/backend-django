@@ -7,7 +7,7 @@ Después de la revisión exhaustiva del sistema de chat, puedo confirmar que **t
 ### 🔧 BUGS CORREGIDOS:
 
 1. **Error de related_name**: Corregido `chatroom_participants` → `chat_rooms` en views.py
-2. **Patrón de URL incorrecto**: Corregido `/api/chat/` → `chat/` en urls.py  
+2. **Patrón de URL incorrecto**: Corregido `/api/chat/` → `chat/` en urls.py
 3. **Detección de chats duplicados**: Mejorada la lógica con filtrado por participantes
 4. **Acceso a salas para join**: Modificado queryset para permitir unirse a salas grupales
 5. **Imports faltantes**: Agregado `from django.db.models import Q` en serializers.py
@@ -18,7 +18,7 @@ Después de la revisión exhaustiva del sistema de chat, puedo confirmar que **t
 
 ```
 ✅ Test 1: Crear sala de chat grupal - PASÓ
-✅ Test 2: Crear chat directo - PASÓ  
+✅ Test 2: Crear chat directo - PASÓ
 ✅ Test 3: Prevenir chats directos duplicados - PASÓ
 ✅ Test 4: Listar salas de chat del usuario - PASÓ
 ✅ Test 5: Enviar mensaje a sala - PASÓ
@@ -34,7 +34,9 @@ Después de la revisión exhaustiva del sistema de chat, puedo confirmar que **t
 ## 📡 ENDPOINTS PARA POSTMAN
 
 ### 🔐 Autenticación Requerida
+
 Todos los endpoints requieren autenticación JWT:
+
 ```
 Authorization: Bearer <tu_token_jwt>
 ```
@@ -42,6 +44,7 @@ Authorization: Bearer <tu_token_jwt>
 ### 🎯 ENDPOINTS PRINCIPALES:
 
 #### 1. **Obtener Token de Autenticación**
+
 ```
 POST /api/v1/auth/login/
 Content-Type: application/json
@@ -53,6 +56,7 @@ Content-Type: application/json
 ```
 
 #### 2. **Salas de Chat**
+
 ```
 # Listar salas del usuario
 GET /api/v1/chat/rooms/
@@ -82,6 +86,7 @@ GET /api/v1/chat/rooms/{room_id}/messages/
 ```
 
 #### 3. **Mensajes**
+
 ```
 # Enviar mensaje
 POST /api/v1/chat/messages/
@@ -93,7 +98,7 @@ POST /api/v1/chat/messages/
 # Responder a mensaje
 POST /api/v1/chat/messages/
 {
-    "room": "room_uuid", 
+    "room": "room_uuid",
     "content": "Mi respuesta",
     "reply_to": "message_uuid"
 }
@@ -106,6 +111,7 @@ GET /api/v1/chat/messages/search/?q=texto_busqueda
 ```
 
 #### 4. **Estado Online**
+
 ```
 # Ver estados online
 GET /api/v1/chat/onlinestatus/
@@ -129,7 +135,7 @@ POST /api/v1/chat/onlinestatus/
 ✅ **Autenticación JWT**: Seguridad completa  
 ✅ **Permisos**: Solo participantes pueden acceder a salas  
 ✅ **WebSocket Support**: Preparado para tiempo real  
-✅ **Paginación**: Manejo eficiente de mensajes  
+✅ **Paginación**: Manejo eficiente de mensajes
 
 ## ⚠️ NOTAS IMPORTANTES:
 
@@ -144,6 +150,7 @@ POST /api/v1/chat/onlinestatus/
 ## 🚀 SERVIDOR LISTO
 
 Para iniciar el servidor:
+
 ```bash
 cd /Users/marcosotomaceda/Desktop/backend-django
 python manage.py runserver

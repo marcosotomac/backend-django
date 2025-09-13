@@ -203,7 +203,7 @@ class DirectChatSerializer(serializers.Serializer):
         ).filter(
             participants__in=[request_user, other_user]
         ).distinct()
-        
+
         # Filtrar rooms que tengan exactamente estos dos usuarios
         for room in existing_rooms:
             participants = list(room.participants.all())
