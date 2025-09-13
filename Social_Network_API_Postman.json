@@ -1,0 +1,1555 @@
+{
+  "info": {
+    "_postman_id": "social-network-api-complete",
+    "name": "Social Network API - Completa",
+    "description": "Colección completa para probar toda la API de la red social desarrollada con Django REST Framework",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔐 Autenticación",
+      "description": "Endpoints para registro, login y gestión de autenticación JWT",
+      "item": [
+        {
+          "name": "Registro de Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"usuario_test\",\n    \"email\": \"test@example.com\",\n    \"password\": \"mi_password_seguro\",\n    \"password_confirm\": \"mi_password_seguro\",\n    \"first_name\": \"Test\",\n    \"last_name\": \"User\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register", ""]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.environment.set('access_token', responseData.access);",
+                  "    pm.environment.set('refresh_token', responseData.refresh);",
+                  "    console.log('Tokens guardados exitosamente');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"usuario_test\",\n    \"password\": \"mi_password_seguro\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login", ""]
+            }
+          }
+        },
+        {
+          "name": "Refrescar Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/token/refresh/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "token", "refresh", ""]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/logout/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "logout", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Perfil de Usuario",
+      "description": "Gestión del perfil y datos del usuario",
+      "item": [
+        {
+          "name": "Ver Perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/profile/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "profile", ""]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Perfil",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"first_name\": \"Nuevo Nombre\",\n    \"last_name\": \"Nuevo Apellido\",\n    \"bio\": \"Esta es mi biografía actualizada\",\n    \"location\": \"Ciudad, País\",\n    \"website\": \"https://miweb.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/profile/update/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "profile", "update", ""]
+            }
+          }
+        },
+        {
+          "name": "Cambiar Contraseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"old_password\": \"mi_password_seguro\",\n    \"new_password\": \"nuevo_password_seguro\",\n    \"new_password_confirm\": \"nuevo_password_seguro\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/change-password/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "change-password", ""]
+            }
+          }
+        },
+        {
+          "name": "Lista de Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/list/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "list", ""]
+            }
+          }
+        },
+        {
+          "name": "Detalle de Usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/usuario_test/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "usuario_test", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📝 Posts",
+      "description": "Creación, edición y gestión de posts",
+      "item": [
+        {
+          "name": "Crear Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"Este es mi primer post con #hashtag y #testing\",\n    \"is_public\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/create/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", "create", ""]
+            }
+          }
+        },
+        {
+          "name": "Lista de Posts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", ""]
+            }
+          }
+        },
+        {
+          "name": "Feed Personal",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/feed/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", "feed", ""]
+            }
+          }
+        },
+        {
+          "name": "Mis Posts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/my-posts/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", "my-posts", ""]
+            }
+          }
+        },
+        {
+          "name": "Detalle de Post",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/{{post_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", "{{post_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Post",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"Post actualizado con nuevos #hashtags\",\n    \"is_public\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/{{post_id}}/update/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", "{{post_id}}", "update", ""]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Post",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/{{post_id}}/delete/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", "{{post_id}}", "delete", ""]
+            }
+          }
+        },
+        {
+          "name": "Estadísticas de Post",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/{{post_id}}/stats/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", "{{post_id}}", "stats", ""]
+            }
+          }
+        },
+        {
+          "name": "Posts de Usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/user/usuario_test/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", "user", "usuario_test", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "#️⃣ Hashtags",
+      "description": "Gestión de hashtags y posts relacionados",
+      "item": [
+        {
+          "name": "Posts por Hashtag",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/hashtag/testing/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", "hashtag", "testing", ""]
+            }
+          }
+        },
+        {
+          "name": "Hashtags Trending",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/posts/hashtags/trending/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "posts", "hashtags", "trending", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👥 Social (Seguir/Likes/Comentarios)",
+      "description": "Funcionalidades sociales: seguir usuarios, likes y comentarios",
+      "item": [
+        {
+          "name": "Seguir Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/follow/otro_usuario/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "social", "follow", "otro_usuario", ""]
+            }
+          }
+        },
+        {
+          "name": "Dejar de Seguir",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/unfollow/otro_usuario/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "social", "unfollow", "otro_usuario", ""]
+            }
+          }
+        },
+        {
+          "name": "Lista de Seguidores",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/followers/usuario_test/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "social", "followers", "usuario_test", ""]
+            }
+          }
+        },
+        {
+          "name": "Lista de Seguidos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/following/usuario_test/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "social", "following", "usuario_test", ""]
+            }
+          }
+        },
+        {
+          "name": "Verificar Estado de Seguimiento",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/check-follow/otro_usuario/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "social",
+                "check-follow",
+                "otro_usuario",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Like a Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/like/post/{{post_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "social", "like", "post", "{{post_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Quitar Like a Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/unlike/post/{{post_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "social",
+                "unlike",
+                "post",
+                "{{post_id}}",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear Comentario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"Este es un comentario de prueba\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/comment/post/{{post_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "social",
+                "comment",
+                "post",
+                "{{post_id}}",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Responder Comentario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"Esta es una respuesta al comentario\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/comment/{{comment_id}}/reply/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "social",
+                "comment",
+                "{{comment_id}}",
+                "reply",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Comentarios de Post",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/post/{{post_id}}/comments/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "social",
+                "post",
+                "{{post_id}}",
+                "comments",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Like a Comentario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/like/comment/{{comment_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "social",
+                "like",
+                "comment",
+                "{{comment_id}}",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle de Comentario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/comment/{{comment_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "social", "comment", "{{comment_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Comentario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"Comentario actualizado\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/comment/{{comment_id}}/update/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "social",
+                "comment",
+                "{{comment_id}}",
+                "update",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Comentario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/comment/{{comment_id}}/delete/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "social",
+                "comment",
+                "{{comment_id}}",
+                "delete",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📖 Stories",
+      "description": "Sistema completo de Stories temporales",
+      "item": [
+        {
+          "name": "Crear Story de Texto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"Esta es mi primera story de texto!\",\n    \"story_type\": \"text\",\n    \"is_public\": true,\n    \"allow_replies\": true,\n    \"duration_hours\": 24,\n    \"background_color\": \"#FF5733\",\n    \"text_color\": \"#FFFFFF\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stories/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "stories", ""]
+            }
+          }
+        },
+        {
+          "name": "Lista de Stories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stories/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "stories", ""]
+            }
+          }
+        },
+        {
+          "name": "Feed de Stories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stories/feed/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "stories", "feed", ""]
+            }
+          }
+        },
+        {
+          "name": "Detalle de Story",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stories/{{story_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "stories", "{{story_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Like a Story",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stories/{{story_id}}/like/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "stories", "{{story_id}}", "like", ""]
+            }
+          }
+        },
+        {
+          "name": "Quitar Like a Story",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stories/{{story_id}}/unlike/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "stories", "{{story_id}}", "unlike", ""]
+            }
+          }
+        },
+        {
+          "name": "Ver Story",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"view_duration\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stories/{{story_id}}/view/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "stories", "{{story_id}}", "view", ""]
+            }
+          }
+        },
+        {
+          "name": "Responder a Story",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"¡Excelente story!\",\n    \"reply_type\": \"text\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stories/{{story_id}}/reply/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "stories", "{{story_id}}", "reply", ""]
+            }
+          }
+        },
+        {
+          "name": "Estadísticas de Story",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stories/{{story_id}}/stats/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "stories", "{{story_id}}", "stats", ""]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Story",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/stories/{{story_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "stories", "{{story_id}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🌟 Highlights",
+      "description": "Gestión de highlights de stories",
+      "item": [
+        {
+          "name": "Crear Highlight",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Vacaciones 2025\",\n    \"description\": \"Mis mejores momentos de vacaciones\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/highlights/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "highlights", ""]
+            }
+          }
+        },
+        {
+          "name": "Lista de Highlights",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/highlights/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "highlights", ""]
+            }
+          }
+        },
+        {
+          "name": "Detalle de Highlight",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/highlights/{{highlight_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "highlights", "{{highlight_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Agregar Story a Highlight",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"story_id\": \"{{story_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/highlights/{{highlight_id}}/add_story/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "highlights",
+                "{{highlight_id}}",
+                "add_story",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 Chat",
+      "description": "Sistema de mensajería en tiempo real",
+      "item": [
+        {
+          "name": "Crear Chat Directo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"participants\": [\"otro_usuario\"],\n    \"room_type\": \"direct\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/chat/rooms/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "api", "chat", "rooms", ""]
+            }
+          }
+        },
+        {
+          "name": "Crear Chat Grupal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Mi Grupo de Chat\",\n    \"description\": \"Un grupo para hablar de todo\",\n    \"participants\": [\"usuario1\", \"usuario2\"],\n    \"room_type\": \"group\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/chat/rooms/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "api", "chat", "rooms", ""]
+            }
+          }
+        },
+        {
+          "name": "Lista de Chats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/chat/rooms/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "api", "chat", "rooms", ""]
+            }
+          }
+        },
+        {
+          "name": "Detalle de Chat",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/chat/rooms/{{room_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "api", "chat", "rooms", "{{room_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Mensajes de Chat",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/chat/rooms/{{room_id}}/messages/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "api",
+                "chat",
+                "rooms",
+                "{{room_id}}",
+                "messages",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enviar Mensaje",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"room\": \"{{room_id}}\",\n    \"content\": \"¡Hola! Este es mi primer mensaje\",\n    \"message_type\": \"text\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/chat/messages/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "api", "chat", "messages", ""]
+            }
+          }
+        },
+        {
+          "name": "Responder Mensaje",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"room\": \"{{room_id}}\",\n    \"content\": \"Esta es una respuesta\",\n    \"message_type\": \"text\",\n    \"reply_to\": \"{{message_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/chat/messages/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "api", "chat", "messages", ""]
+            }
+          }
+        },
+        {
+          "name": "Estado Online",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"is_online\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/chat/online-status/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "api", "chat", "online-status", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔔 Notificaciones",
+      "description": "Sistema completo de notificaciones",
+      "item": [
+        {
+          "name": "Lista de Notificaciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/notifications/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "social", "notifications", ""]
+            }
+          }
+        },
+        {
+          "name": "Marcar Notificaciones como Leídas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"notification_ids\": [\"notification_id_1\", \"notification_id_2\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/social/notifications/mark-read/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "social", "notifications", "mark-read", ""]
+            }
+          }
+        },
+        {
+          "name": "Sistema de Notificaciones - Lista",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/notifications/notifications/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "api", "notifications", "notifications", ""]
+            }
+          }
+        },
+        {
+          "name": "Configuraciones de Notificación",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/notifications/settings/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "api", "notifications", "settings", ""]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Configuraciones",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"likes_enabled\": true,\n    \"comments_enabled\": true,\n    \"follows_enabled\": true,\n    \"messages_enabled\": true,\n    \"stories_enabled\": true,\n    \"push_enabled\": true,\n    \"email_enabled\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/notifications/settings/{{settings_id}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "api",
+                "notifications",
+                "settings",
+                "{{settings_id}}",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📤 Upload de Archivos",
+      "description": "Subida y gestión de archivos media",
+      "item": [
+        {
+          "name": "Subir Imagen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "upload_type",
+                  "value": "avatar",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload/image/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload", "image", ""]
+            }
+          }
+        },
+        {
+          "name": "Subida por Lotes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "upload_type",
+                  "value": "post_images",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload/batch/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload", "batch", ""]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Archivo",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"file_url\": \"http://ejemplo.com/media/archivo.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload/delete/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload", "delete", ""]
+            }
+          }
+        },
+        {
+          "name": "Información de Almacenamiento",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload/info/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload", "info", ""]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Script que se ejecuta antes de cada request",
+          "// Verificar si tenemos token válido",
+          "const token = pm.environment.get('access_token');",
+          "if (!token && pm.request.url.toString().indexOf('/auth/') === -1) {",
+          "    console.log('⚠️ No se encontró token de acceso. Asegúrate de hacer login primero.');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "post_id",
+      "value": "",
+      "type": "string",
+      "description": "ID del post para testing"
+    },
+    {
+      "key": "story_id",
+      "value": "",
+      "type": "string",
+      "description": "ID de la story para testing"
+    },
+    {
+      "key": "comment_id",
+      "value": "",
+      "type": "string",
+      "description": "ID del comentario para testing"
+    },
+    {
+      "key": "room_id",
+      "value": "",
+      "type": "string",
+      "description": "ID del chat room para testing"
+    },
+    {
+      "key": "message_id",
+      "value": "",
+      "type": "string",
+      "description": "ID del mensaje para testing"
+    },
+    {
+      "key": "highlight_id",
+      "value": "",
+      "type": "string",
+      "description": "ID del highlight para testing"
+    },
+    {
+      "key": "settings_id",
+      "value": "",
+      "type": "string",
+      "description": "ID de configuraciones para testing"
+    }
+  ]
+}
