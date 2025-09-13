@@ -93,8 +93,9 @@ class PostDeleteView(generics.DestroyAPIView):
         instance = self.get_object()
 
         # Actualizar contador de posts del usuario
-        request.user.posts_count -= 1
-        request.user.save()
+        if request.user.posts_count > 0:
+            request.user.posts_count -= 1
+            request.user.save()
 
         self.perform_destroy(instance)
 
@@ -179,7 +180,7 @@ class HashtagPostsView(generics.ListAPIView):
         hashtag = get_object_or_404(Hashtag, name=hashtag_name.lower())
 
         return Post.objects.filter(
-            posthashtag__hashtag=hashtag,
+            post_hashtags__hashtag=hashtag,
             is_public=True
         ).select_related('author').order_by('-created_at')
 

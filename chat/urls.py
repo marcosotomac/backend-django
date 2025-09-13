@@ -12,5 +12,5 @@ router.register(r'online-status', views.OnlineStatusViewSet,
                 basename='onlinestatus')
 
 urlpatterns = [
-    path('api/chat/', include(router.urls)),
+    path('chat/', include(router.urls)),
 ]

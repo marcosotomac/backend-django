@@ -37,6 +37,16 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Obtener salas donde el usuario es participante"""
+        # Para el action 'join', permitir acceso a salas donde no es participante
+        if self.action == 'join':
+            return ChatRoom.objects.filter(
+                is_active=True,
+                room_type='group'  # Solo salas grupales para join
+            ).prefetch_related(
+                'participants',
+                'created_by',
+            )
+        
         return ChatRoom.objects.filter(
             participants=self.request.user,
             is_active=True
@@ -271,7 +281,7 @@ class OnlineStatusViewSet(viewsets.ReadOnlyModelViewSet):
         # Obtener usuarios con los que el usuario actual tiene salas de chat
         user_rooms = ChatRoom.objects.filter(participants=self.request.user)
         related_users = User.objects.filter(
-            chatroom_participants__in=user_rooms
+            chat_rooms__in=user_rooms
         ).exclude(id=self.request.user.id).distinct()
 
         return OnlineStatus.objects.filter(

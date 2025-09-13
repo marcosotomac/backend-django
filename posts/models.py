@@ -61,16 +61,21 @@ class Post(models.Model):
         """Override del save para extraer hashtags automáticamente"""
         super().save(*args, **kwargs)
 
-        # Extraer y crear hashtags
+        # Extraer y crear hashtags solo si no existen
         hashtags = self.extract_hashtags()
         for hashtag_name in hashtags:
             hashtag, created = Hashtag.objects.get_or_create(name=hashtag_name)
-            PostHashtag.objects.get_or_create(post=self, hashtag=hashtag)
-            if created:
-                hashtag.posts_count = 1
-            else:
-                hashtag.posts_count = hashtag.posts.count()
-            hashtag.save()
+            # Usar get_or_create para evitar duplicados
+            post_hashtag, created = PostHashtag.objects.get_or_create(
+                post=self, 
+                hashtag=hashtag
+            )
+            
+            # Actualizar contador solo si es necesario
+            current_count = hashtag.posts.count()
+            if hashtag.posts_count != current_count:
+                hashtag.posts_count = current_count
+                hashtag.save()
 
     def delete_image(self):
         """Elimina la imagen del almacenamiento"""

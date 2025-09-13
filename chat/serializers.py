@@ -3,6 +3,7 @@ Serializers para el sistema de chat
 """
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from django.db import models
 from .models import ChatRoom, Message, MessageRead, OnlineStatus
 from users.serializers import UserBasicSerializer
 
@@ -196,13 +197,21 @@ class DirectChatSerializer(serializers.Serializer):
         request_user = self.context['request'].user
         other_user = User.objects.get(id=user_id)
 
-        # Buscar chat directo existente
-        existing_room = ChatRoom.objects.filter(
-            room_type='direct',
-            participants=request_user
+        # Buscar chat directo existente entre estos dos usuarios
+        existing_rooms = ChatRoom.objects.filter(
+            room_type='direct'
         ).filter(
-            participants=other_user
-        ).first()
+            participants__in=[request_user, other_user]
+        ).distinct()
+        
+        # Filtrar rooms que tengan exactamente estos dos usuarios
+        for room in existing_rooms:
+            participants = list(room.participants.all())
+            if len(participants) == 2 and request_user in participants and other_user in participants:
+                existing_room = room
+                break
+        else:
+            existing_room = None
 
         if existing_room:
             return existing_room

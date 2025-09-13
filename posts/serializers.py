@@ -106,11 +106,14 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
         for hashtag_name in set(hashtags):  # Usar set para evitar duplicados
             hashtag, created = Hashtag.objects.get_or_create(name=hashtag_name)
+            # Usar get_or_create para evitar duplicados
             PostHashtag.objects.get_or_create(post=post, hashtag=hashtag)
 
             # Actualizar contador de posts del hashtag
-            hashtag.posts_count = hashtag.posts.count()
-            hashtag.save()
+            current_count = hashtag.posts.count()
+            if hashtag.posts_count != current_count:
+                hashtag.posts_count = current_count
+                hashtag.save()
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -205,11 +208,14 @@ class PostUpdateSerializer(serializers.ModelSerializer):
 
         for hashtag_name in set(hashtags):
             hashtag, created = Hashtag.objects.get_or_create(name=hashtag_name)
+            # Usar get_or_create para evitar duplicados
             PostHashtag.objects.get_or_create(post=post, hashtag=hashtag)
 
             # Actualizar contador de posts del hashtag
-            hashtag.posts_count = hashtag.posthashtag_set.count()
-            hashtag.save()
+            current_count = hashtag.posts.count()
+            if hashtag.posts_count != current_count:
+                hashtag.posts_count = current_count
+                hashtag.save()
 
 
 class PostListSerializer(serializers.ModelSerializer):
