@@ -1,0 +1,7 @@
+*.env
+*.env.*
+!.env.example
+!.env.test.example
+!.env.production.example
+!.env.staging.example
+!.env.local.example
