@@ -71,7 +71,7 @@ class ChatAPITestCase(APITestCase):
             'name': 'Chat Grupal Test',
             'room_type': 'group',
             'description': 'Sala de prueba para testing',
-            'participant_ids': [str(self.user2.id), str(self.user3.id)]
+            'participants': [self.user2.username, self.user3.username]
         }
 
         response = self.client.post('/api/v1/chat/rooms/', data, format='json')
@@ -89,7 +89,7 @@ class ChatAPITestCase(APITestCase):
         self.authenticate_user(self.token1)
 
         data = {
-            'user_id': str(self.user2.id)
+            'username': self.user2.username
         }
 
         response = self.client.post(
@@ -106,7 +106,7 @@ class ChatAPITestCase(APITestCase):
         self.authenticate_user(self.token1)
 
         # Crear primer chat directo
-        data = {'user_id': str(self.user2.id)}
+        data = {'username': self.user2.username}
         response1 = self.client.post(
             '/api/v1/chat/rooms/direct_chat/', data, format='json')
         room_id_1 = response1.data['id']

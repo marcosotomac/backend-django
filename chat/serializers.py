@@ -103,18 +103,37 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
 class ChatRoomCreateSerializer(serializers.ModelSerializer):
     """Serializer para crear salas de chat"""
-    participant_ids = serializers.ListField(
-        child=serializers.UUIDField(),
+    participants = serializers.ListField(
+        child=serializers.CharField(),
         write_only=True,
-        required=False
+        required=False,
+        help_text="Lista de usernames de los participantes"
     )
 
     class Meta:
         model = ChatRoom
-        fields = ['name', 'room_type', 'description', 'participant_ids']
+        fields = ['name', 'room_type', 'description', 'participants']
+
+    def validate_participants(self, value):
+        """Validar que todos los usernames existan"""
+        if not value:
+            return value
+
+        existing_users = User.objects.filter(username__in=value)
+        existing_usernames = set(
+            existing_users.values_list('username', flat=True))
+        provided_usernames = set(value)
+
+        missing_usernames = provided_usernames - existing_usernames
+        if missing_usernames:
+            raise serializers.ValidationError(
+                f"Los siguientes usuarios no existen: {', '.join(missing_usernames)}"
+            )
+
+        return value
 
     def create(self, validated_data):
-        participant_ids = validated_data.pop('participant_ids', [])
+        participant_usernames = validated_data.pop('participants', [])
         request = self.context['request']
 
         # Crear la sala
@@ -126,8 +145,9 @@ class ChatRoomCreateSerializer(serializers.ModelSerializer):
         # Agregar participantes
         room.participants.add(request.user)  # Siempre incluir al creador
 
-        if participant_ids:
-            participants = User.objects.filter(id__in=participant_ids)
+        if participant_usernames:
+            participants = User.objects.filter(
+                username__in=participant_usernames)
             room.participants.add(*participants)
 
         return room
@@ -175,53 +195,58 @@ class OnlineStatusSerializer(serializers.ModelSerializer):
 
 class DirectChatSerializer(serializers.Serializer):
     """Serializer para iniciar un chat directo"""
-    user_id = serializers.UUIDField()
+    username = serializers.CharField()
 
-    def validate_user_id(self, value):
+    def validate_username(self, value):
         """Validar que el usuario existe"""
         try:
-            user = User.objects.get(id=value)
-            request_user = self.context['request'].user
-
-            if user == request_user:
-                raise serializers.ValidationError(
-                    "No puedes chatear contigo mismo")
-
+            user = User.objects.get(username=value)
             return value
         except User.DoesNotExist:
-            raise serializers.ValidationError("Usuario no encontrado")
+            raise serializers.ValidationError(
+                f"No existe un usuario con username: {value}"
+            )
 
-    def create(self, validated_data):
-        """Crear o encontrar chat directo existente"""
-        user_id = validated_data['user_id']
-        request_user = self.context['request'].user
-        other_user = User.objects.get(id=user_id)
+    def validate(self, data):
+        """Validar que no se intente crear un chat consigo mismo"""
+        request = self.context['request']
+        if data['username'] == request.user.username:
+            raise serializers.ValidationError(
+                "No puedes crear un chat directo contigo mismo"
+            )
+        return data
 
-        # Buscar chat directo existente entre estos dos usuarios
-        existing_rooms = ChatRoom.objects.filter(
-            room_type='direct'
+    def save(self):
+        """Crear o encontrar el chat directo"""
+        from django.db.models import Q
+
+        request = self.context['request']
+        username = self.validated_data['username']
+        other_user = User.objects.get(username=username)
+
+        # Buscar si ya existe un chat directo entre estos usuarios
+        existing_room = ChatRoom.objects.filter(
+            room_type='direct',
+            is_active=True
         ).filter(
-            participants__in=[request_user, other_user]
-        ).distinct()
-
-        # Filtrar rooms que tengan exactamente estos dos usuarios
-        for room in existing_rooms:
-            participants = list(room.participants.all())
-            if len(participants) == 2 and request_user in participants and other_user in participants:
-                existing_room = room
-                break
-        else:
-            existing_room = None
+            participants=request.user
+        ).filter(
+            participants=other_user
+        ).first()
 
         if existing_room:
             return existing_room
 
-        # Crear nueva sala de chat directo
+        # Crear nuevo chat directo
         room = ChatRoom.objects.create(
+            name=f"Chat entre {request.user.username} y {other_user.username}",
             room_type='direct',
-            created_by=request_user
+            created_by=request.user,
+            is_active=True
         )
-        room.participants.add(request_user, other_user)
+
+        # Agregar ambos participantes
+        room.participants.add(request.user, other_user)
 
         return room
 

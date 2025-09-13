@@ -66,13 +66,13 @@ POST /api/v1/chat/rooms/
 {
     "name": "Mi Sala Grupal",
     "room_type": "group",
-    "participants": [2, 3, 4]
+    "participants": ["testuser", "otrouser"]
 }
 
 # Crear chat directo
 POST /api/v1/chat/rooms/direct_chat/
 {
-    "other_user": 2
+    "username": "testuser"
 }
 
 # Unirse a sala grupal
